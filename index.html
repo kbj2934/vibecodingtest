@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f6f6f0" />
+<title>쌓기나무 탐구실 | 3D 입체수학 공방</title>
+<meta name="description" content="쌓기나무를 만들고 돌려 보며 위·앞·옆에서 본 모양과 전체 개수의 관계를 탐구하는 수학 웹앱" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+:root { --ink:#1c343b; --ink2:#40565b; --muted:#708487; --paper:#f6f6f0; --card:#fff; --line:#e1e7e3; --teal:#167e78; --teal-light:#e5f4ed; --copper:#dc8752; --blue:#eff5f8; --shadow:0 8px 28px rgba(30,55,55,.045); font-synthesis:none; }
+* {box-sizing:border-box;} html{scroll-behavior:smooth;} body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans','Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased;} button,select,input{font:inherit;}button{cursor:pointer;} button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #7dc9ba;outline-offset:3px;} button:disabled{opacity:.43;cursor:not-allowed;} button:not(:disabled){-webkit-tap-highlight-color:transparent;} [hidden]{display:none!important;} ::selection{background:#d5f0e5;}
+.topbar{height:78px;background:#fbfcf9;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,3vw,44px);gap:20px;}
+.brand{display:flex;align-items:center;gap:13px;min-width:0;}.mark{width:43px;height:43px;display:grid;place-items:center;background:#173c43;border-radius:13px;box-shadow:inset 0 -4px 0 #102e32;flex-shrink:0;}.mark svg{width:31px;height:31px;}.brand-name{font-size:20px;font-weight:900;letter-spacing:-1.3px;line-height:1.2;white-space:nowrap;}.brand-sub{font-size:10px;font-weight:800;letter-spacing:2.1px;color:#75908e;margin-top:4px;}.top-actions{display:flex;align-items:center;gap:10px;}.top-caption{font-size:12px;color:var(--muted);font-weight:600;margin-right:8px;}.plain-btn{border:1px solid #d6e2db;background:#fff;border-radius:11px;color:#385355;padding:11px 14px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:.18s;}.plain-btn:hover{border-color:#7bbcaf;background:#f0f9f4;}.plain-btn svg,.primary-btn svg{width:16px;height:16px;}.primary-btn{border:1px solid #167e78;background:var(--teal);border-radius:12px;padding:12px 16px;color:#fff;font-weight:800;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 0 #126863;transition:.15s;}.primary-btn:hover{background:#116e68;transform:translateY(-1px);}.primary-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #126863;}.top-actions .primary-btn{white-space:nowrap;}
+.wrap{max-width:1810px;margin:auto;padding:26px clamp(16px,2.5vw,40px) 38px;}.intro{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;margin-bottom:20px;}.eyebrow{font-size:11px;font-weight:900;letter-spacing:2.3px;color:var(--teal);display:flex;align-items:center;gap:7px;}.eyebrow:before{content:'';width:7px;height:7px;background:#e4aa77;border-radius:50%;}.hero-title{font-size:clamp(23px,2.4vw,34px);font-weight:900;letter-spacing:-1.8px;margin:8px 0 6px;line-height:1.32;}.hero-sub{font-size:13px;color:#748584;line-height:1.7;margin:0;}.intro-right{border-left:1px solid #d9e3df;padding-left:18px;font-size:12px;line-height:1.65;color:#69817e;max-width:285px;}.intro-right b{color:var(--ink);}
+.mode-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:17px;}.mode-tab{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 18px;min-height:82px;display:flex;align-items:center;gap:14px;color:var(--ink2);text-align:left;transition:transform .15s,border .15s,background .15s;}.mode-tab:hover{transform:translateY(-2px);border-color:#9cc9be;}.mode-tab.is-active{background:#193e43;color:#fff;border-color:#193e43;box-shadow:0 5px 16px rgba(16,62,61,.12);}.mode-index{font-family:'DM Sans',sans-serif;font-size:30px;font-weight:800;line-height:1;letter-spacing:-1px;color:#cfddd9;min-width:40px;}.mode-tab.is-active .mode-index{color:#8bc7b6;}.mode-label{font-size:14px;font-weight:900;white-space:nowrap;}.mode-desc{font-size:11px;color:#91a3a3;display:block;line-height:1.3;margin-top:4px;font-weight:500;}.mode-tab.is-active .mode-desc{color:#aac5c2;}
+.workspace{display:grid;grid-template-columns:minmax(238px,267px) minmax(360px,1fr) minmax(278px,316px);align-items:stretch;gap:15px;}.pane{border:1px solid var(--line);background:#fff;border-radius:19px;box-shadow:var(--shadow);min-width:0;}.controls-pane{padding:20px 19px;display:flex;flex-direction:column;gap:17px;}.panel-kicker{display:flex;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:1.8px;color:#73908c;font-weight:900;}.small-badge{background:#edf5ee;color:#388378;border-radius:20px;font-size:10px;padding:5px 10px;letter-spacing:0;}.panel-title{font-size:20px;font-weight:900;letter-spacing:-.95px;margin:5px 0 6px;}.panel-desc{font-size:12px;color:#6d8282;line-height:1.9;margin:0;min-height:61px;}.sep{height:1px;background:#e8eeeb;}.field-label{font-weight:900;font-size:12px;display:block;margin-bottom:9px;}.field-select{border:1px solid #dce7e1;border-radius:11px;background:#f8fbf8;color:#284b4d;padding:11px 12px;width:100%;font-size:12px;font-weight:800;cursor:pointer;}.field-hint{margin:8px 0 0;color:#81928f;font-size:10px;line-height:1.5;}
+.mini-heading{font-size:12px;font-weight:900;margin:0 0 11px;}.hintbox{padding:13px;border-radius:12px;background:#f4f8f5;font-size:12px;line-height:1.8;color:#526e6d;}.hintbox strong{color:#176a64;}.hintbox.coral{background:#fff6ef;color:#8b6548;}.hintbox.coral strong{color:#93532f;}.left-stack{display:flex;flex-direction:column;gap:10px;}.two-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.small-btn{border:1px solid #d9e5de;background:#fff;color:#325658;padding:11px 9px;border-radius:10px;font-size:11px;font-weight:900;line-height:1.35;}.small-btn:hover{border-color:#98cbbb;background:#f7faf7;}.small-btn.is-active{background:#1b6968;color:white;border-color:#1b6968;}.small-btn.hot{background:#fff2e7;color:#a76038;border-color:#f0cfb6;}.wide{width:100%;}.ctrl-spacer{flex:1;}.keyboard-note{color:#8a9a96;font-size:10px;line-height:1.8;}
+.stage-pane{display:flex;flex-direction:column;overflow:hidden;}.stage-header{height:68px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e9efeb;}.stage-heading{font-size:15px;font-weight:900;letter-spacing:-.6px;margin:0 0 2px;}.stage-mini{font-size:10px;color:#869995;white-space:nowrap;}.count-chip{border-radius:25px;background:#ebf6ef;color:#1b7469;padding:9px 12px;font-size:11px;font-weight:900;white-space:nowrap;}.count-chip span{font-size:15px;font-family:'DM Sans',sans-serif;}.count-chip.masked{background:#f5eee4;color:#a36d43;}
+.scene-container{height:clamp(380px,44vw,530px);min-height:380px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 30%,#fff 0%,#eff7f4 65%,#e5eeee 100%);touch-action:pan-y;}.scene-container:before{content:'';position:absolute;z-index:0;inset:0;background-image:radial-gradient(#aacdc7 0.75px, transparent 0.75px);background-size:20px 20px;opacity:.19;pointer-events:none;}.canvas-host{position:absolute;inset:0;touch-action:none;}.canvas-host canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}.canvas-host canvas:active{cursor:grabbing;}.scene-caption{position:absolute;top:16px;left:17px;display:flex;gap:7px;align-items:center;z-index:2;pointer-events:none;}.scene-tag{border:1px solid #dce9e6;background:#fffffff0;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:900;color:#5a7875;backdrop-filter:blur(9px);}.view-buttons{position:absolute;right:14px;bottom:15px;z-index:2;display:flex;gap:5px;padding:5px;border:1px solid #dce5df;background:#ffffffeb;border-radius:12px;box-shadow:0 4px 13px #56746e16;backdrop-filter:blur(12px);}.view-buttons button{border:none;background:transparent;font-size:11px;font-weight:800;color:#6a807b;padding:10px 10px;border-radius:8px;white-space:nowrap;}.view-buttons button:hover{background:#eef6f3;}.view-buttons button.active{background:#20484b;color:#fff;}.scene-help{position:absolute;bottom:22px;left:17px;z-index:1;font-size:10px;color:#72918b;max-width:245px;line-height:1.7;pointer-events:none;}.scene-error{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:#52726e;font-size:13px;line-height:1.8;z-index:4;background:linear-gradient(#eef7f5,#f9fafa);}
+.bottom-strip{padding:14px 19px;background:#fff;border-top:1px solid #eaf0ec;display:flex;align-items:center;gap:13px;min-height:69px;flex-wrap:wrap;}.layer-label{font-size:11px;font-weight:900;white-space:nowrap;}.slider{flex:1;min-width:60px;accent-color:#1a8580;cursor:pointer;}.layer-value{font-family:'DM Sans',sans-serif;white-space:nowrap;min-width:52px;font-size:10px;font-weight:900;color:#39807b;text-align:right;}.strip-divider{width:1px;background:#dde6e1;height:23px;}.strip-caption{font-size:10px;color:#83918e;}
+.views-pane{padding:16px;display:flex;flex-direction:column;gap:10px;}.right-kicker{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:900;padding:2px 2px 7px;gap:8px;}.view-status{font-size:9px;background:#e8f5ed;color:#258276;padding:5px 8px;border-radius:6px;white-space:nowrap;}.diagram-card{border-radius:13px;border:1px solid #e7eeec;overflow:hidden;background:#fcfdfc;}.diagram-head{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-bottom:1px solid #eef2ef;}.diagram-title{font-size:11px;font-weight:900;}.diagram-label{font-size:9px;font-weight:800;color:#8e9e9a;}.diagram-art{height:124px;display:grid;place-items:center;padding:8px;}.diagram-art svg{width:100%;height:100%;display:block;max-width:200px;}.diagram-card:nth-of-type(2) .diagram-art{background:#fbfdfd;}.view-foot{margin:6px 2px 0;font-size:11px;color:#728783;line-height:1.7;min-height:26px;}.legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:3px;}.legend span{font-size:9px;font-weight:800;color:#6b807d;display:flex;gap:4px;align-items:center;}.swatch{height:9px;width:9px;border-radius:2px;display:inline-block;}
+.below{display:grid;grid-template-columns:minmax(238px,267px) minmax(0,1fr) minmax(278px,316px);gap:15px;margin-top:16px;align-items:start;}.mission{padding:22px 24px;grid-column:2/3;}.mission-heading{display:flex;align-items:center;gap:10px;margin-bottom:8px;}.mission-icon{width:32px;height:32px;border-radius:10px;background:#e9f5ee;color:#178077;display:grid;place-items:center;font-size:17px;font-weight:900;}.mission-title{font-size:15px;font-weight:900;letter-spacing:-.4px;}.mission-copy{font-size:12px;line-height:1.85;color:#6f8580;margin:8px 0 0;}.mission-task{border-radius:13px;background:#f4f8f5;padding:13px 14px;font-size:12px;color:#4f6a64;line-height:1.8;margin-top:12px;}.mission-task b{color:#1b7168;}
+.editor{padding:19px;grid-column:3/4;}.editor-head{display:flex;justify-content:space-between;align-items:center;gap:8px;}.editor-title{font-size:13px;font-weight:900;}.editor-sub{font-size:10px;color:#8d9d98;}.edit-grid{display:grid;gap:5px;margin-top:14px;}.edit-cell{aspect-ratio:1.15;background:#f0f5f2;border:1px solid #d9e6df;border-radius:10px;color:#337e78;font-size:15px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:background .1s, transform .1s;}.edit-cell:hover{transform:translateY(-1px);background:#dff2e9;border-color:#8bbba9;}.edit-cell:active{transform:scale(.95);}.edit-cell.empty{color:#a0b7b0;background:#fbfcfa;}.edit-cell small{font-size:9px;font-weight:600;color:#93aba4;}.edit-cell .celllevel{font-size:15px;font-weight:900;line-height:1.35;}.editor-hint{font-size:10px;color:#849994;line-height:1.7;margin:11px 0 0;}.teacher{padding:20px;grid-column:1/2;}.teacher summary{list-style:none;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:900;cursor:pointer;}.teacher summary::-webkit-details-marker{display:none;}.teacher summary::after{content:'＋';color:#217971;font-size:19px;}.teacher[open] summary::after{content:'−';}.teacher p{font-size:11px;color:#738883;line-height:2;}.footer{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#97a8a2;margin-top:24px;gap:12px;}.footer b{font-weight:800;color:#6b8982;}
+.feedback{border-radius:12px;background:#f4f8f5;border:1px solid #e0ece5;padding:12px;font-size:11px;line-height:1.8;color:#527069;min-height:44px;}.feedback.success{background:#e6f7ed;border-color:#9fd7b5;color:#136b53;}.feedback.error{background:#fff2ed;border-color:#f2cbb9;color:#9b5637;}.answer-row{display:flex;gap:8px;}.answer-row input{min-width:0;width:50%;background:#fbfdfa;border:1px solid #d5e5dc;border-radius:10px;padding:12px 10px;font-weight:900;font-size:19px;color:#22484a;outline:none;text-align:center;}.answer-row input:focus{border-color:#399c8a;}.answer-row .primary-btn{flex:1;padding:10px;font-size:12px;}.status-pips{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}.status-pip{font-size:10px;padding:5px 9px;border-radius:15px;background:#e8f3ef;color:#236f65;font-weight:800;}.tight p{margin:0;}.box-note{font-size:10px;color:#75918a;line-height:1.7;}
+@media(max-width:1280px){.workspace{grid-template-columns:235px minmax(320px,1fr) 275px;gap:11px;}.controls-pane{padding:17px 15px;}.views-pane{padding:12px;}.mode-tab{padding:14px 11px;gap:8px;}.mode-index{font-size:24px;min-width:30px;}.mode-label{font-size:13px;}.below{grid-template-columns:235px 1fr 275px;gap:11px;}.diagram-art{height:118px;}}
+@media(max-width:1050px){.workspace{grid-template-columns:240px minmax(0,1fr);}.views-pane{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}.right-kicker,.view-foot,.legend{grid-column:1/-1;}.diagram-art{height:140px;}.below{grid-template-columns:240px minmax(0,1fr);}.teacher{grid-column:1/2;grid-row:1;}.mission{grid-column:2/3;grid-row:1;}.editor{grid-column:1/-1;}.edit-grid{max-width:470px;}.scene-container{height:510px;}.intro-right{display:none;}}
+@media(max-width:710px){.topbar{height:70px;padding:0 15px;}.brand-name{font-size:17px;}.brand-sub{font-size:8px;letter-spacing:1.5px;}.mark{height:37px;width:37px;}.top-caption{display:none;}.top-actions{gap:6px;}.top-actions .plain-btn{padding:11px;}.top-actions .plain-btn .btn-copy{display:none;}.top-actions .primary-btn{font-size:11px;padding:11px 10px;}.wrap{padding:21px 11px 32px;}.hero-title{font-size:25px;letter-spacing:-1.5px;}.hero-sub{font-size:11px;}.mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}.mode-tab{min-height:70px;padding:11px 12px;border-radius:11px;}.mode-desc{font-size:10px;}.mode-index{font-size:22px;}.workspace{grid-template-columns:1fr;gap:11px;}.controls-pane{grid-row:2;gap:14px;padding:17px;}.controls-pane .panel-desc{min-height:0;}.stage-pane{grid-row:1;}.views-pane{grid-row:3;grid-template-columns:repeat(3,minmax(0,1fr));padding:10px;gap:6px;}.views-pane .diagram-head{padding:9px 6px;}.views-pane .diagram-title{font-size:10px;}.diagram-label{display:none;}.views-pane .diagram-art{height:104px;padding:4px;}.right-kicker{padding:6px 4px;}.scene-container{height:400px;min-height:400px;}.stage-header{height:62px;padding:12px 14px;}.view-buttons{right:7px;bottom:9px;gap:2px;padding:4px;}.view-buttons button{font-size:10px;padding:9px 8px;}.scene-help{bottom:69px;font-size:10px;max-width:150px;}.scene-caption{top:10px;left:10px;}.bottom-strip{padding:12px;gap:8px;}.below{grid-template-columns:1fr;gap:11px;}.teacher,.mission,.editor{grid-column:1/-1;grid-row:auto;padding:17px;}.editor{order:1;}.mission{order:2;}.teacher{order:3;}.footer{flex-direction:column;align-items:flex-start;}.intro{margin-bottom:18px;}.edit-cell{max-height:75px;}.editor-hint{margin-top:8px;}}
+@media(max-width:380px){.brand-name{font-size:15px;}.brand-sub{display:none;}.mode-tab{gap:6px;}.mode-label{font-size:12px;}.scene-container{height:355px;min-height:355px;}.view-buttons button{font-size:9px;padding:8px 6px;}.diagram-art{height:90px!important;}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;scroll-behavior:auto!important;transition:none!important;}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 28 10v13L16 30 4 23V10L16 3Z" stroke="#c5e5dd" stroke-width="1.9" stroke-linejoin="round"/><path d="m4 10 12 7 12-7M16 17v13" stroke="#c5e5dd" stroke-width="1.8"/><path d="m10 7 12 7" stroke="#f5bb85" stroke-width="2"/></svg></div><div><div class="brand-name">쌓기나무 탐구실</div><div class="brand-sub">THINK IN 3D · MATH LAB</div></div></div>
+  <div class="top-actions"><div class="top-caption">내 손으로 만들고, 돌려 보고, 발견하기</div><button type="button" class="plain-btn" id="saveScene" title="현재 3D 장면을 PNG 이미지로 저장"><span aria-hidden="true">↧</span><span class="btn-copy">장면 저장</span></button><button type="button" class="primary-btn" id="newChallenge"><span aria-hidden="true">↻</span> 새로운 구조물</button></div>
+</header>
+<main class="wrap">
+  <section class="intro"><div><div class="eyebrow">3D SPACE EXPLORER</div><h1 class="hero-title">쌓아 보고, 다르게 보고, 수학을 발견해요.</h1><p class="hero-sub">하나의 구조물, 세 개의 시선. 보이지 않는 나무까지 생각해 볼까요?</p></div><div class="intro-right"><b>선생님을 위한 탐구 도구</b><br />정답보다 중요한 건 <b>왜 그렇게 보이는지</b> 설명하는 과정입니다.</div></section>
+  <nav class="mode-tabs" aria-label="학습 모드" role="tablist">
+    <button type="button" role="tab" aria-selected="true" class="mode-tab is-active" data-mode="observe"><span class="mode-index">01</span><span><span class="mode-label">관찰 탐구</span><span class="mode-desc">이쪽에서 보면?</span></span></button>
+    <button type="button" role="tab" aria-selected="false" class="mode-tab" data-mode="build"><span class="mode-index">02</span><span><span class="mode-label">자유 만들기</span><span class="mode-desc">내가 직접 쌓기</span></span></button>
+    <button type="button" role="tab" aria-selected="false" class="mode-tab" data-mode="count"><span class="mode-index">03</span><span><span class="mode-label">개수 추리</span><span class="mode-desc">가려진 나무 찾기</span></span></button>
+    <button type="button" role="tab" aria-selected="false" class="mode-tab" data-mode="restore"><span class="mode-index">04</span><span><span class="mode-label">도형 복원</span><span class="mode-desc">그림 보고 다시 쌓기</span></span></button>
+  </nav>
+  <section class="workspace">
+    <aside class="pane controls-pane" aria-label="학습 도구">
+      <div><div class="panel-kicker">EXPLORATION GUIDE <span id="gradeBadge" class="small-badge">기초 탐구</span></div><h2 class="panel-title" id="modeTitle">관찰 탐구</h2><p class="panel-desc" id="modeDescription">쌓기나무를 돌려 보기 전에 위·앞·옆에서 보이는 모양을 머릿속으로 그려 보세요.</p></div>
+      <div class="sep"></div>
+      <div><label for="grade" class="field-label">난이도 · 학년별 추천</label><select class="field-select" id="grade"><option value="easy">기초 · 1~2학년 (2×2, 2층)</option><option value="normal" selected>기본 · 3~4학년 (3×3, 3층)</option><option value="hard">도전 · 5~6학년 (4×4, 4층)</option><option value="expert">심화 · 5~6학년+ (5×5, 4층)</option></select><p class="field-hint">학년에 관계없이 원하는 난이도를 선택할 수 있어요.</p></div>
+      <div class="sep"></div>
+      <section class="mode-panel left-stack" data-mode-panel="observe"><h3 class="mini-heading">시점을 바꾸면 무엇이 달라질까요?</h3><div class="hintbox">① 먼저 세 방향에서 본 모양을 예상하세요.<br />② <strong>위 · 앞 · 옆</strong> 버튼을 누르세요.<br />③ 예상한 모양과 비교해 보세요.</div><button class="primary-btn wide" type="button" id="revealViews">세 방향 그림 확인하기</button><button class="small-btn wide hot" type="button" id="compareExample">발견 미션: 같은 모양, 다른 개수</button><div class="box-note" id="compareNote"></div></section>
+      <section class="mode-panel left-stack" data-mode-panel="build" hidden><h3 class="mini-heading">쌓기 도구</h3><div class="two-buttons"><button type="button" class="small-btn is-active" id="toolAdd">＋ 쌓기</button><button type="button" class="small-btn" id="toolRemove">－ 빼기</button></div><div class="hintbox">3D 구조물이나 아래 <strong>바닥 설계판</strong>을 눌러 보세요. 쌓을 때마다 세 방향 그림이 달라집니다.</div><div class="two-buttons"><button type="button" class="small-btn" id="undoBuild">↶ 되돌리기</button><button type="button" class="small-btn" id="clearBuild">모두 비우기</button></div></section>
+      <section class="mode-panel left-stack" data-mode-panel="count" hidden><h3 class="mini-heading">쌓기나무는 모두 몇 개일까요?</h3><label for="countAnswer" class="box-note">숨어 있는 나무까지 세어 보세요.</label><div class="answer-row"><input id="countAnswer" type="number" min="1" step="1" inputmode="numeric" placeholder="?" aria-label="쌓기나무 전체 개수 예상" /><button type="button" id="checkCount" class="primary-btn">정답 확인</button></div><button type="button" id="countHint" class="small-btn wide">힌트 한 단계 보기</button><div id="countFeedback" aria-live="polite" class="feedback">관찰하고 예상한 개수를 입력해 보세요.</div><div class="box-note" id="countRecord">맞힌 문제 0개</div></section>
+      <section class="mode-panel left-stack" data-mode-panel="restore" hidden><h3 class="mini-heading">세 방향 그림을 보고 구조물을 만들어요.</h3><div class="two-buttons"><button type="button" class="small-btn is-active" id="restoreAdd">＋ 쌓기</button><button type="button" class="small-btn" id="restoreRemove">－ 빼기</button></div><button type="button" id="checkRestore" class="primary-btn wide">세 방향 모양 비교하기</button><button type="button" id="overlayRestore" class="small-btn wide">내 모양 겹쳐 보기</button><div class="two-buttons"><button type="button" id="undoRestore" class="small-btn">↶ 되돌리기</button><button type="button" id="clearRestore" class="small-btn">모두 비우기</button></div><div id="restoreFeedback" class="feedback" aria-live="polite">색칠된 그림과 같은 모양을 만들어 보세요. 여러 가지 정답이 있을 수 있어요.</div><div id="restoreVariants" class="status-pips"></div></section>
+      <div class="ctrl-spacer"></div><div class="sep"></div><p class="keyboard-note">TIP · 3D 화면을 드래그하면 회전하고, 휠이나 두 손가락으로 확대합니다. 만들기 모드에서는 블록 또는 바닥을 톡 눌러 조작합니다.</p>
+    </aside>
+    <section class="pane stage-pane" aria-label="쌓기나무 3D 공간">
+      <div class="stage-header"><div><h2 class="stage-heading" id="stageTitle">지금 보이는 모습은?</h2><div class="stage-mini" id="stageSubtitle">손으로 돌려보며 차이를 발견해요</div></div><div id="countChip" class="count-chip">전체 <span id="totalCount">?</span>개</div></div>
+      <div class="scene-container" id="sceneContainer"><div class="canvas-host" id="canvasHost"></div><div class="scene-caption"><div class="scene-tag" id="viewName">◆ 입체로 보기</div></div><div class="scene-help" id="sceneHelp">빈 공간을 드래그하면 자유롭게 회전해요</div><div class="view-buttons" aria-label="관찰 방향"><button type="button" class="active" data-view="iso">입체</button><button type="button" data-view="top">위</button><button type="button" data-view="front">앞</button><button type="button" data-view="right">오른쪽</button></div><div class="scene-error" id="sceneError">3D 장면을 준비하고 있습니다…</div></div>
+      <div class="bottom-strip"><label for="layerSlider" class="layer-label">층별로 관찰</label><input class="slider" type="range" id="layerSlider" min="1" max="3" value="3" step="1" /><span id="layerValue" class="layer-value">전체 3층</span><div class="strip-divider"></div><button type="button" id="resetLayers" class="small-btn" style="padding:7px 10px;">전체 보기</button></div>
+    </section>
+    <aside class="pane views-pane" aria-label="위 앞 오른쪽에서 본 모양"><div class="right-kicker"><span id="viewsHeading">세 방향에서 본 모양</span><span class="view-status" id="viewsStatus">생각해 봐요</span></div><div class="diagram-card"><div class="diagram-head"><span class="diagram-title">↑ 위에서</span><span class="diagram-label">TOP VIEW</span></div><div class="diagram-art" id="diagramTop"></div></div><div class="diagram-card"><div class="diagram-head"><span class="diagram-title">● 앞에서</span><span class="diagram-label">FRONT VIEW</span></div><div class="diagram-art" id="diagramFront"></div></div><div class="diagram-card"><div class="diagram-head"><span class="diagram-title">● 오른쪽에서</span><span class="diagram-label">RIGHT VIEW</span></div><div class="diagram-art" id="diagramRight"></div></div><p id="viewFoot" class="view-foot">먼저 스스로 예상하고, ‘세 방향 그림 확인하기’를 눌러 보세요.</p><div class="legend" id="viewLegend" hidden><span><i class="swatch" style="background:#32867d"></i>일치</span><span><i class="swatch" style="background:#e9a277"></i>부족</span><span><i class="swatch" style="background:#8b9ae1"></i>초과</span></div></aside>
+  </section>
+  <section class="below">
+    <details class="pane teacher"><summary>교실에서 활용하기</summary><p id="teacherNote">각 시점으로 카메라를 전환하기 전에 학생들이 보일 모양을 말이나 손그림으로 예상하게 해 보세요. 앞과 옆은 어느 방향인지 표시를 확인하도록 안내해 주세요.</p></details>
+    <section class="pane mission"><div class="mission-heading"><div class="mission-icon" id="missionIcon">↗</div><div class="mission-title" id="missionTitle">오늘의 탐구 질문</div></div><p class="mission-copy" id="missionCopy">같은 쌓기나무를 보는 방향에 따라 왜 모양이 달라질까요?</p><div class="mission-task" id="missionTask"><b>생각 열기</b> · 위에서 본 모양만으로 쌓기나무의 개수를 정확히 알 수 있을까요?</div></section>
+    <section class="pane editor" id="editor" hidden><div class="editor-head"><div class="editor-title">바닥 설계판</div><div class="editor-sub">위에서 내려다본 위치</div></div><div class="edit-grid" id="editGrid"></div><p class="editor-hint">한 칸을 누르면 해당 위치에 나무를 한 개씩 쌓거나 뺍니다. 화면 <b>아래쪽이 앞</b>입니다.</p></section>
+  </section>
+  <footer class="footer"><span><b>쌓기나무 탐구실</b> · 관찰 · 구성 · 추론 · 복원</span><span>별도의 로그인 없이 사용 · Three.js 기반 3D 수학 활동</span></footer>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const settings = {
+  easy: {n:2,h:2,label:'기초 탐구',name:'1~2학년'},
+  normal:{n:3,h:3,label:'기본 탐구',name:'3~4학년'},
+  hard:{n:4,h:4,label:'도전 탐구',name:'5~6학년'},
+  expert:{n:5,h:4,label:'심화 탐구',name:'심화'}
+};
+const content = {
+ observe:{title:'관찰 탐구',desc:'쌓기나무를 돌려 보기 전에 위·앞·옆에서 보이는 모양을 머릿속으로 그려 보세요.',stage:'지금 보이는 모습은?',sub:'손으로 돌려보며 차이를 발견해요',mission:'같은 쌓기나무를 보는 방향에 따라 왜 모양이 달라질까요?',task:'<b>생각 열기</b> · 위에서 본 모양만으로 쌓기나무의 개수를 정확히 알 수 있을까요?',teacher:'각 시점으로 카메라를 전환하기 전에 학생들이 보일 모양을 말이나 손그림으로 예상하게 해 보세요. 앞과 옆은 어느 방향인지 표시를 확인하도록 안내해 주세요.'},
+ build:{title:'자유 만들기',desc:'쌓기나무를 직접 추가하고 빼면서 어느 방향에서 본 모양이 바뀌는지 살펴보세요.',stage:'나만의 쌓기나무 작품',sub:'블록이나 바닥을 터치하면 선택한 도구가 작동해요',mission:'나무 한 개를 더 쌓으면 세 방향의 모양이 모두 바뀔까요?',task:'<b>만들기 미션</b> · 나무를 추가해도 앞에서 본 모양이 바뀌지 않는 위치를 찾아보세요.',teacher:'학생이 직접 만든 뒤 서로 다른 구조물을 비교하게 해 보세요. "나무 1개가 늘었는데 위에서 본 모양은 왜 그대로일까?"처럼 변하지 않는 성질도 질문해 보세요.'},
+ count:{title:'개수 추리',desc:'보이는 것만 세면 놓칠 수 있어요. 구조물을 자유롭게 돌려 보며 숨은 나무의 개수를 추리하세요.',stage:'전체 몇 개일까요?',sub:'정답을 확인하기 전에 스스로 세어 보세요',mission:'숨겨진 쌓기나무를 빠뜨리지 않고 세는 방법은?',task:'<b>생각 열기</b> · 1층부터 차례로 세어 보면 어떤 점이 편리할까요?',teacher:'정답을 바로 공개하기보다 학생이 층별로 나누어 계산한 과정이나 다른 셈 방법을 발표하게 해 보세요. 3D 구조물은 자유롭게 회전해도 됩니다.'},
+ restore:{title:'도형 복원',desc:'주어진 위·앞·옆 그림을 단서로 구조물을 완성해 보세요. 하나의 정답만 있는 것은 아니랍니다.',stage:'세 장의 그림을 입체로!',sub:'옆의 목표 그림과 같도록 쌓아 보세요',mission:'세 방향 그림이 같으면 구조물도 반드시 같을까요?',task:'<b>수학적 발견</b> · 세 방향 모양을 유지하면서 전체 나무 개수를 바꿀 수 있을까요?',teacher:'같은 세 방향 그림을 만드는 서로 다른 구조물이 가능한지 확인하게 해 보세요. 모양이 같다면 원래 문제의 내부 쌓기 방식과 달라도 정답으로 인정합니다.'}
+};
+const state={mode:'observe',level:'normal',n:3,maxH:3,board:[],target:[],preview:false,overlay:false,tool:'add',history:[],countWins:0,solvedCount:false,hint:0,compareStep:0,compareMode:false,variants:new Set(),layer:3,view:'iso',tween:null};
+function emptyBoard(n=state.n){return Array.from({length:n},()=>Array(n).fill(0));}
+function clone(b){return b.map(r=>r.slice());}
+function sum(b){return b.flat().reduce((a,c)=>a+c,0);}
+function maxHeight(b){return Math.max(0,...b.flat());}
+function randint(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function randomBoard(n,h){
+  const b=emptyBoard(n), active=new Set();
+  const seed=[randint(0,n-1),randint(0,n-1)];
+  active.add(seed.join(','));
+  const wanted=randint(Math.max(n,Math.ceil(n*n*.48)),Math.max(n,Math.ceil(n*n*.85)));
+  let attempts=0;
+  while(active.size<wanted&&attempts++<700){
+    const coords=[...active][randint(0,active.size-1)].split(',').map(Number);
+    const nearby=[[1,0],[-1,0],[0,1],[0,-1]].sort(()=>Math.random()-.5);
+    const candidate=nearby.map(([dx,dz])=>[coords[0]+dx,coords[1]+dz]).find(([x,z])=>x>=0&&x<n&&z>=0&&z<n&&!active.has(`${x},${z}`));
+    if(candidate) active.add(candidate.join(','));
+  }
+  for(const item of active){const [x,z]=item.split(',').map(Number);b[z][x]=randint(1,h);}
+  if(maxHeight(b)<h){const [x,z]=[...active][randint(0,active.size-1)].split(',').map(Number);b[z][x]=h;}
+  return b;
+}
+function projections(b,h=state.maxH){
+  const n=b.length;
+  const top=Array.from({length:n},(_,z)=>Array.from({length:n},(_,x)=>b[z][x]>0));
+  const frontHeights=Array.from({length:n},(_,x)=>Math.max(...b.map(row=>row[x])));
+  // 오른쪽에서 볼 때 화면 왼쪽은 앞(+z), 오른쪽은 뒤(-z).
+  const sideHeights=b.map(row=>Math.max(...row)).reverse();
+  const shape=(arr)=>Array.from({length:h},(_,r)=>arr.map(v=>v>=h-r));
+  return {top,front:shape(frontHeights),right:shape(sideHeights)};
+}
+function sameProjection(a,b){return ['top','front','right'].every(v=>a[v].length===b[v].length&&a[v].every((row,r)=>row.every((val,c)=>val===b[v][r][c])));}
+const geo=new THREE.BoxGeometry(.97,.97,.97);
+const edgeGeometry=new THREE.EdgesGeometry(geo);
+const scene=new THREE.Scene();
+const canvasHost=$('#canvasHost');
+let renderer,camera,controls,blocksGroup,baseGroup,raycaster,pointer;
+let cubeMeshes=[],tileMeshes=[];
+let visible=true;
+function initScene(){
+  try {
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    canvasHost.appendChild(renderer.domElement);
+    camera=new THREE.OrthographicCamera(-6,6,5,-5,.05,150);
+    camera.position.set(10,11,13);
+    controls=new OrbitControls(camera,renderer.domElement);
+    controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=false;
+    controls.minPolarAngle=.025;controls.maxPolarAngle=Math.PI/2-.025;
+    controls.minZoom=.55;controls.maxZoom=2.6;
+    controls.target.set(0,1.2,0);controls.update();
+    controls.addEventListener('start',()=>{state.tween=null;state.view='free';updateViewButtons();});
+    scene.add(new THREE.HemisphereLight('#ffffff','#b5d1ca',2.15));
+    const key=new THREE.DirectionalLight('#ffffff',3.5);key.position.set(-4,11,7);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-12;key.shadow.camera.right=12;key.shadow.camera.top=12;key.shadow.camera.bottom=-12;key.shadow.normalBias=.02;key.shadow.bias=-.00007;scene.add(key);
+    const fill=new THREE.DirectionalLight('#cbe6fa',1.4);fill.position.set(6,6,-6);scene.add(fill);
+    blocksGroup=new THREE.Group();baseGroup=new THREE.Group();scene.add(blocksGroup,baseGroup);
+    raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
+    let start=null;
+    renderer.domElement.addEventListener('pointerdown',ev=>{start={x:ev.clientX,y:ev.clientY,t:performance.now()};});
+    renderer.domElement.addEventListener('pointerup',ev=>{if(!start)return;const delta=Math.hypot(start.x-ev.clientX,start.y-ev.clientY);const elapsed=performance.now()-start.t;start=null;if(delta<8&&elapsed<700)handleSceneTap(ev);});
+    renderer.domElement.addEventListener('contextmenu',ev=>ev.preventDefault());
+    const ro=new ResizeObserver(resizeScene);ro.observe(canvasHost);
+    $('#sceneError').hidden=true;
+    resizeScene();requestAnimationFrame(animate);
+  }catch(err){console.error(err);$('#sceneError').textContent='이 브라우저에서 3D를 실행할 수 없습니다. 최신 브라우저에서 다시 열어 주세요.';}
+}
+function resizeScene(){if(!renderer)return;const w=canvasHost.clientWidth,h=canvasHost.clientHeight;if(!w||!h)return;const aspect=w/h;const frustum=(state.n+state.maxH*.88+2.15)*1.04;camera.left=-frustum*aspect/2;camera.right=frustum*aspect/2;camera.top=frustum/2;camera.bottom=-frustum/2;camera.updateProjectionMatrix();renderer.setSize(w,h,false);}
+function animate(t){if(!renderer)return;requestAnimationFrame(animate);
+  if(state.tween){const tw=state.tween;const q=Math.min(1,(t-tw.start)/tw.duration),ease=1-(1-q)**3;camera.position.copy(tw.from).lerp(tw.to,ease);if(q===1)state.tween=null;}
+  controls.update();renderer.render(scene,camera);
+}
+function disposeGroup(group){
+  const geometries=new Set(),materials=new Set(),textures=new Set();
+  group.traverse(obj=>{
+    if(obj.geometry&&obj.geometry!==geo&&obj.geometry!==edgeGeometry)geometries.add(obj.geometry);
+    if(obj.material){for(const m of (Array.isArray(obj.material)?obj.material:[obj.material])){
+      materials.add(m);if(m.map)textures.add(m.map);
+    }}
+  });
+  for(const tex of textures)tex.dispose();
+  for(const m of materials)m.dispose();
+  for(const g of geometries)g.dispose();
+  group.clear();
+}
+function rebuildScene(){if(!renderer)return;disposeGroup(blocksGroup);disposeGroup(baseGroup);cubeMeshes=[];tileMeshes=[];const n=state.n;
+  const colors=['#58b5a3','#69bda6','#74c6ad','#8acdb8'];
+  const stoneGeo=new THREE.BoxGeometry(1,.16,1);
+  const stoneMat=new THREE.MeshStandardMaterial({color:'#e0ede7',roughness:1});
+  for(let z=0;z<n;z++)for(let x=0;x<n;x++){
+    const wx=x-(n-1)/2,wz=z-(n-1)/2;
+    const tile=new THREE.Mesh(stoneGeo,stoneMat);tile.position.set(wx,-.17,wz);tile.receiveShadow=true;tile.userData={kind:'tile',x,z};baseGroup.add(tile);tileMeshes.push(tile);
+    const h=Math.min(state.board[z][x],state.layer);
+    for(let k=0;k<h;k++){
+      const cube=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:colors[k%4],roughness:.71,metalness:.02}));cube.position.set(wx,k+.5,wz);cube.castShadow=true;cube.receiveShadow=true;cube.userData={kind:'cube',x,z};blocksGroup.add(cube);cubeMeshes.push(cube);
+      const edges=new THREE.LineSegments(edgeGeometry,new THREE.LineBasicMaterial({color:'#226861',transparent:true,opacity:.43,depthWrite:false}));cube.add(edges);
+    }
+  }
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(n+2.2,n+2.2),new THREE.ShadowMaterial({color:0x306e62,opacity:.095}));ground.rotation.x=-Math.PI/2;ground.position.y=-.255;ground.receiveShadow=true;baseGroup.add(ground);
+  // Place physical labels: front is +Z, right is +X.
+  addGroundLabel('앞',0,n/2+.65);
+  addGroundLabel('오른쪽',n/2+.7,0);
+}
+function addGroundLabel(text,x,z){const cvs=document.createElement('canvas');cvs.width=256;cvs.height=80;const cx=cvs.getContext('2d');cx.clearRect(0,0,256,80);cx.fillStyle='#56847c';cx.font='700 32px sans-serif';cx.textAlign='center';cx.fillText(text,128,53);const texture=new THREE.CanvasTexture(cvs);texture.colorSpace=THREE.SRGBColorSpace;const plane=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.45),new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false}));plane.rotation.x=-Math.PI/2;plane.position.set(x,-.085,z);baseGroup.add(plane);}
+function handleSceneTap(ev){if(!['build','restore'].includes(state.mode))return;const rect=renderer.domElement.getBoundingClientRect();pointer.set((ev.clientX-rect.left)/rect.width*2-1,-(ev.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects([...cubeMeshes,...tileMeshes],false)[0];if(hit){const {x,z}=hit.object.userData;applyEdit(x,z);}}
+function cameraView(view,fast=false){if(!camera)return;state.view=view;updateViewButtons();const d=Math.max(9,state.n*3.2);const center=new THREE.Vector3(0,state.maxH*.44,0);controls.target.copy(center);let offset;
+  if(view==='top')offset=new THREE.Vector3(0,d,.004);
+  else if(view==='front')offset=new THREE.Vector3(0,.02,d);
+  else if(view==='right')offset=new THREE.Vector3(d,.02,0);
+  else offset=new THREE.Vector3(d*.95,d*.9,d*1.15);
+  const dest=center.clone().add(offset);
+  if(fast){state.tween=null;camera.position.copy(dest);controls.update();}
+  else{state.tween={from:camera.position.clone(),to:dest,start:performance.now(),duration:520};}
+}
+function updateViewButtons(){$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));const name={iso:'◆ 입체로 보기',top:'↑ 위에서 보기',front:'● 앞에서 보기',right:'● 오른쪽에서 보기',free:'↗ 자유롭게 보기'};$('#viewName').textContent=name[state.view]||name.iso;}
+function newLevel(level){state.level=level;state.n=settings[level].n;state.maxH=settings[level].h;state.layer=state.maxH;$('#grade').value=level;$('#gradeBadge').textContent=settings[level].label;$('#layerSlider').max=state.maxH;$('#layerSlider').value=state.layer;updateLayerLabel();resizeScene();startMode(state.mode);}
+function startMode(mode){state.mode=mode;state.compareMode=false;state.compareStep=0;state.preview=false;state.overlay=false;state.tool='add';state.history=[];state.solvedCount=false;state.hint=0;state.variants=new Set();
+  if(mode==='build'){state.board=emptyBoard();state.target=emptyBoard();}
+  else if(mode==='restore'){state.target=randomBoard(state.n,state.maxH);state.board=emptyBoard();}
+  else{state.board=randomBoard(state.n,state.maxH);state.target=clone(state.board);}
+  state.layer=state.maxH;$('#layerSlider').value=state.layer;updateLayerLabel();
+  $('#countAnswer').value='';$('#countFeedback').textContent='관찰하고 예상한 개수를 입력해 보세요.';$('#countFeedback').className='feedback';$('#restoreFeedback').textContent='색칠된 그림과 같은 모양을 만들어 보세요. 여러 가지 정답이 있을 수 있어요.';$('#restoreFeedback').className='feedback';$('#compareNote').textContent='';$('#compareExample').textContent='발견 미션: 같은 모양, 다른 개수';$('#revealViews').textContent='세 방향 그림 확인하기';$('#overlayRestore').textContent='내 모양 겹쳐 보기';$('#restoreVariants').innerHTML='';
+  $$('.mode-tab').forEach(b=>{const active=b.dataset.mode===mode;b.classList.toggle('is-active',active);b.setAttribute('aria-selected',String(active));});
+  $$('[data-mode-panel]').forEach(p=>p.hidden=p.dataset.modePanel!==mode);
+  const c=content[mode];$('#modeTitle').textContent=c.title;$('#modeDescription').textContent=c.desc;$('#stageTitle').textContent=c.stage;$('#stageSubtitle').textContent=c.sub;$('#missionCopy').textContent=c.mission;$('#missionTask').innerHTML=c.task;$('#teacherNote').textContent=c.teacher;$('#missionIcon').textContent={observe:'↗',build:'▦',count:'?',restore:'◇'}[mode];$('#editor').hidden=!['build','restore'].includes(mode);
+  syncTool();refreshAll();cameraView('iso',true);
+}
+function refreshAll(){rebuildScene();renderViews();renderEditor();updateCount();$('#countRecord').textContent=`맞힌 문제 ${state.countWins}개`;}
+function updateCount(){let value;if(state.mode==='count')value=state.solvedCount?sum(state.board):'?';else value=sum(state.board);$('#totalCount').textContent=value;$('#countChip').classList.toggle('masked',value==='?');}
+function updateLayerLabel(){$('#layerValue').textContent=state.layer===state.maxH?`전체 ${state.maxH}층`:`1~${state.layer}층`;}
+function syncTool(){for(const [add,remove] of [['#toolAdd','#toolRemove'],['#restoreAdd','#restoreRemove']]){$(add).classList.toggle('is-active',state.tool==='add');$(remove).classList.toggle('is-active',state.tool==='remove');}}
+function setTool(tool){state.tool=tool;syncTool();$('#sceneHelp').textContent=tool==='add'?'나무나 바닥을 톡 누르면 한 개씩 쌓여요':'나무나 바닥을 톡 누르면 맨 위부터 한 개씩 빠져요';renderEditor();}
+function applyEdit(x,z){if(x<0||z<0||x>=state.n||z>=state.n)return;const prev=state.board[z][x];let next=state.tool==='add'?Math.min(state.maxH,prev+1):Math.max(0,prev-1);if(prev===next)return;state.history.push(clone(state.board));if(state.history.length>45)state.history.shift();state.board[z][x]=next;state.layer=state.maxH;$('#layerSlider').value=state.layer;updateLayerLabel();state.overlay=false;$('#overlayRestore').textContent='내 모양 겹쳐 보기';refreshAll();if(state.mode==='restore'){setRestoreFeedback('바뀐 모양을 살펴보고 비교하기를 눌러 보세요.');}}
+function undo(){if(!state.history.length)return;state.board=state.history.pop();state.layer=state.maxH;$('#layerSlider').value=state.layer;updateLayerLabel();refreshAll();}
+function clearBoard(){if(!sum(state.board))return;state.history.push(clone(state.board));state.board=emptyBoard();state.overlay=false;$('#overlayRestore').textContent='내 모양 겹쳐 보기';refreshAll();if(state.mode==='restore')setRestoreFeedback('구조물을 비웠어요. 다시 만들어 보세요.');}
+function renderEditor(){const host=$('#editGrid');if(!['build','restore'].includes(state.mode)){host.innerHTML='';return;}host.style.gridTemplateColumns=`repeat(${state.n}, minmax(0, 1fr))`;
+ let html='';for(let z=0;z<state.n;z++)for(let x=0;x<state.n;x++){const val=state.board[z][x];html+=`<button type="button" class="edit-cell ${val===0?'empty':''}" data-x="${x}" data-z="${z}" aria-label="앞에서 ${state.n-z}번째 줄, 왼쪽에서 ${x+1}번째 칸, 현재 ${val}개, ${state.tool==='add'?'한 개 쌓기':'한 개 빼기'}"><span class="celllevel">${val||'＋'}</span><small>${val?'개':'빈칸'}</small></button>`;}
+ host.innerHTML=html;}
+function shapeSVG(kind,source,{unknown=false,overlay=false,current=null}={}){const shape=projections(source),sh=shape[kind];const actual=current?projections(current)[kind]:null;const rows=sh.length,cols=sh[0].length;const unit=Math.min(27,116/Math.max(rows,cols));const gridW=cols*unit,gridH=rows*unit;const startX=(184-gridW)/2,startY=(132-gridH)/2;let pieces=[];
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const yes=sh[r][c],mine=actual?.[r][c];let fill='#f7f9f7';let line='#d7e4dc';if(unknown){fill='#eef4ef';line='#dfebe4';}else if(overlay){if(yes&&mine)fill='#32867d';else if(yes)fill='#e9a277';else if(mine)fill='#8b9ae1';else fill='#f8fafa';}else if(yes){fill=state.mode==='restore'?'#325960':'#55b5a6';line=state.mode==='restore'?'#25444c':'#368b80';}
+ pieces.push(`<rect x="${(startX+c*unit+1).toFixed(1)}" y="${(startY+r*unit+1).toFixed(1)}" width="${(unit-2).toFixed(1)}" height="${(unit-2).toFixed(1)}" rx="2.5" fill="${fill}" stroke="${line}" stroke-width="1"/>`);
+ }
+ if(unknown)pieces.push(`<text x="92" y="${(startY+gridH/2+11).toFixed(1)}" text-anchor="middle" fill="#6c9790" font-family="sans-serif" font-weight="900" font-size="38">?</text>`);
+ return `<svg viewBox="0 0 184 132" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${pieces.join('')}</svg>`;
+}
+function renderViews(){const isObserve=state.mode==='observe',isRestore=state.mode==='restore';const hidden=isObserve&&!state.preview;const src=isRestore?state.target:state.board;for(const [key,id] of [['top','#diagramTop'],['front','#diagramFront'],['right','#diagramRight']]){$(id).innerHTML=shapeSVG(key,src,{unknown:hidden,overlay:isRestore&&state.overlay,current:state.board});}
+ $('#viewsHeading').textContent=isRestore?'목표: 이렇게 보이게 쌓아요':'세 방향에서 본 모양';$('#viewsStatus').textContent=hidden?'먼저 예상하기':isRestore?(state.overlay?'비교 중':'목표 그림'):'실시간 연동';$('#viewFoot').textContent=hidden?'먼저 스스로 예상한 뒤 ‘세 방향 그림 확인하기’를 누르세요.':isRestore?'목표 그림과 똑같이 보이면 정답입니다. 같은 그림을 만드는 구조물은 여럿일 수 있습니다.':'진한 칸은 해당 방향에서 보이는 쌓기나무의 윤곽입니다. 숨겨진 내부 개수까지 항상 알 수 있는 것은 아닙니다.';
+ $('#viewLegend').hidden=!isRestore||!state.overlay;
+}
+function countCheck(){const ans=$('#countAnswer');const raw=ans.value.trim();if(!raw){feedback('#countFeedback','먼저 예상한 개수를 입력해 주세요.','error');return;}const guess=Number(raw);if(!Number.isInteger(guess)||guess<1){feedback('#countFeedback','1 이상의 자연수를 입력해 주세요.','error');return;}const total=sum(state.board);
+ if(guess===total){if(!state.solvedCount)state.countWins++;state.solvedCount=true;feedback('#countFeedback',`정답이에요! 모두 ${total}개입니다. 층별로 몇 개인지 설명해 볼까요?`,'success');$('#missionTask').innerHTML='<b>한 걸음 더!</b> · 위에서 본 칸의 수와 전체 쌓기나무의 수가 서로 다른 까닭을 설명해 보세요.';}
+ else{feedback('#countFeedback',guess>total?'실제보다 많게 셌어요. 같은 쌓기나무를 두 번 세지 않았는지 살펴보세요.':'아직 숨어 있는 나무가 있어요. 구조물을 돌리거나 층을 나누어 보세요.','error');}
+ updateCount();$('#countRecord').textContent=`맞힌 문제 ${state.countWins}개`;
+}
+function feedback(sel,msg,type=''){const el=$(sel);el.textContent=msg;el.className=`feedback ${type}`.trim();}
+function countHint(){const level=++state.hint;const total=sum(state.board);const one=state.board.flat().filter(v=>v>=1).length;const top=maxHeight(state.board);
+ if(level===1)feedback('#countFeedback','힌트 1 · 위에서 보이는 칸마다 최소한 쌓기나무 한 개가 있어요. 하지만 두 개 이상 쌓인 칸도 있답니다.');
+ else if(level===2)feedback('#countFeedback',`힌트 2 · 맨 아래층에는 ${one}개가 놓여 있어요. 위층도 세어 보세요.`);
+ else{const arr=Array.from({length:top},(_,i)=>state.board.flat().filter(v=>v>=i+1).length);feedback('#countFeedback',`힌트 3 · 층별로 아래부터 ${arr.map((v,i)=>`${i+1}층 ${v}개`).join(' · ')}입니다. 모두 더해 보세요.`);}
+}
+function setRestoreFeedback(msg,type=''){feedback('#restoreFeedback',msg,type);}
+function checkRestore(){const target=projections(state.target),mine=projections(state.board);state.overlay=true;$('#overlayRestore').textContent='비교 그만하기';renderViews();if(!sum(state.board)){setRestoreFeedback('먼저 바닥 설계판에서 쌓기나무를 놓아 보세요.','error');return;}
+ if(sameProjection(target,mine)){const cnt=sum(state.board);state.variants.add(cnt);setRestoreFeedback(`세 방향 모양이 모두 일치해요! 내 구조물은 ${cnt}개로 만들었어요. 같은 모양을 다른 개수로도 만들어 볼까요?`,'success');$('#restoreVariants').innerHTML=[...state.variants].sort((a,b)=>a-b).map(v=>`<span class="status-pip">발견한 개수 ${v}개</span>`).join('');}
+ else{const names={top:'위',front:'앞',right:'오른쪽'};const wrong=Object.keys(names).filter(k=>!mine[k].every((row,r)=>row.every((v,c)=>v===target[k][r][c])));setRestoreFeedback(`${wrong.map(k=>names[k]).join(' · ')}에서 본 모양이 아직 달라요. 주황색은 부족한 부분, 보라색은 더 나온 부분이에요.`,'error');}
+}
+function showCompareExample(){if(state.level!=='easy'){state.level='easy';state.n=2;state.maxH=2;$('#grade').value='easy';$('#gradeBadge').textContent=settings.easy.label;$('#layerSlider').max=2;resizeScene();}
+ state.compareMode=true;state.preview=true;state.compareStep=(state.compareStep+1)%2;
+ state.board=state.compareStep===1?[[2,1],[1,2]]:[[2,2],[2,2]];state.target=clone(state.board);state.layer=2;$('#layerSlider').value=2;updateLayerLabel();$('#compareNote').textContent=state.compareStep===1?'구조물 A · 총 6개입니다. 그림을 기억해 보세요.':'구조물 B · 총 8개입니다. 세 방향 그림을 비교해 보세요.';$('#compareExample').textContent=state.compareStep===1?'다음: 구조물 B (8개) 보기':'다시: 구조물 A (6개) 보기';$('#revealViews').textContent='세 방향 그림 숨기기';refreshAll();cameraView('iso',true);
+}
+function snapshot(){if(!renderer)return;renderer.render(scene,camera);const a=document.createElement('a');a.href=renderer.domElement.toDataURL('image/png');a.download=`쌓기나무_${state.mode}_${new Date().toISOString().slice(0,10)}.png`;document.body.append(a);a.click();a.remove();}
+$$('.mode-tab').forEach(b=>b.addEventListener('click',()=>startMode(b.dataset.mode)));
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>cameraView(b.dataset.view)));
+$('#newChallenge').addEventListener('click',()=>startMode(state.mode));
+$('#grade').addEventListener('change',ev=>newLevel(ev.target.value));
+$('#revealViews').addEventListener('click',()=>{state.preview=!state.preview;$('#revealViews').textContent=state.preview?'세 방향 그림 숨기기':'세 방향 그림 확인하기';renderViews();});
+$('#compareExample').addEventListener('click',showCompareExample);
+$('#toolAdd').addEventListener('click',()=>setTool('add'));$('#toolRemove').addEventListener('click',()=>setTool('remove'));
+$('#restoreAdd').addEventListener('click',()=>setTool('add'));$('#restoreRemove').addEventListener('click',()=>setTool('remove'));
+$('#undoBuild').addEventListener('click',undo);$('#undoRestore').addEventListener('click',undo);
+$('#clearBuild').addEventListener('click',clearBoard);$('#clearRestore').addEventListener('click',clearBoard);
+$('#countAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')countCheck();});
+$('#checkCount').addEventListener('click',countCheck);$('#countHint').addEventListener('click',countHint);
+$('#checkRestore').addEventListener('click',checkRestore);
+$('#overlayRestore').addEventListener('click',()=>{state.overlay=!state.overlay;$('#overlayRestore').textContent=state.overlay?'비교 그만하기':'내 모양 겹쳐 보기';renderViews();});
+$('#editGrid').addEventListener('click',e=>{const b=e.target.closest('button[data-x]');if(b)applyEdit(Number(b.dataset.x),Number(b.dataset.z));});
+$('#layerSlider').addEventListener('input',e=>{state.layer=Number(e.target.value);updateLayerLabel();rebuildScene();});
+$('#resetLayers').addEventListener('click',()=>{state.layer=state.maxH;$('#layerSlider').value=state.layer;updateLayerLabel();rebuildScene();});
+$('#saveScene').addEventListener('click',snapshot);
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&['build','restore'].includes(state.mode)&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();undo();}});
+window.addEventListener('visibilitychange',()=>{visible=!document.hidden;});
+initScene();newLevel('normal');
+</script>
+<script>
+// When offline, the module import cannot load. Give teachers a useful explanation.
+window.addEventListener('load',()=>{setTimeout(()=>{const note=document.getElementById('sceneError');if(note&&!note.hidden)note.innerHTML='<strong>3D 라이브러리를 불러오지 못했습니다.</strong><p>이 파일은 최초 실행 시 인터넷 연결이 필요합니다.<br>인터넷을 확인한 후 다시 열어 주세요.</p>';},9000);});
+</script>
+</body>
+</html>
